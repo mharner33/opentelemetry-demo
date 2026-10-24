@@ -1,0 +1,7 @@
+# Values for the observeinc/agent Helm chart. The collection endpoint and
+# cluster name are passed with --set at install time, and the tokens live in
+# the agent-credentials Secret (see README.md).
+
+application:
+  REDMetrics:
+    enabled: true

@@ -1,0 +1,59 @@
+# Values for the open-telemetry/opentelemetry-demo Helm chart on GKE, sending
+# all telemetry to the Observe Agent forwarder (see observe-agent-values.yaml).
+# The payment image, its tag and its service.version are set by
+# .github/workflows/deploy-gke.yml, not here.
+
+default:
+  envOverrides:
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: service.version={{ .Chart.AppVersion }},deployment.environment.name=gke-demo
+
+components:
+  flagd:
+    # Mount a ConfigMap owned by CI instead of the chart's flagd-config, so the
+    # flags come from src/flagd/demo.flagd.json in this repo and helm upgrades
+    # never reset them.
+    additionalVolumes:
+      - name: config-ro
+        configMap:
+          name: demo-flagd-config
+
+opentelemetry-collector:
+  # Node, kubelet and cluster metrics come from the Observe Agent instead.
+  presets:
+    hostMetrics:
+      enabled: false
+    kubeletMetrics:
+      enabled: false
+    clusterMetrics:
+      enabled: false
+  config:
+    exporters:
+      otlp_grpc/observe:
+        endpoint: observe-agent-forwarder.observe.svc.cluster.local:4317
+        tls:
+          insecure: true
+        sending_queue:
+          batch: {}
+    service:
+      pipelines:
+        traces:
+          exporters: [otlp_grpc/observe, span_metrics]
+        metrics:
+          exporters: [otlp_grpc/observe]
+        logs:
+          exporters: [otlp_grpc/observe]
+        profiles:
+          exporters: [debug]
+
+jaeger:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+grafana:
+  enabled: false
+
+opensearch:
+  enabled: false
