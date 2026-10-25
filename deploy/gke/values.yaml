@@ -19,6 +19,21 @@ components:
           name: demo-flagd-config
 
 opentelemetry-collector:
+  # The Observe Agent forwarder DaemonSet binds these host ports; demo services
+  # reach this collector through its Service, so it doesn't need them.
+  ports:
+    otlp:
+      hostPort: 0
+    otlp-http:
+      hostPort: 0
+    jaeger-compact:
+      hostPort: 0
+    jaeger-thrift:
+      hostPort: 0
+    jaeger-grpc:
+      hostPort: 0
+    zipkin:
+      hostPort: 0
   # Node, kubelet and cluster metrics come from the Observe Agent instead.
   presets:
     hostMetrics:
