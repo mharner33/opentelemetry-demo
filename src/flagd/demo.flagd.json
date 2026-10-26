@@ -154,7 +154,7 @@
       }
     },
     "paymentFailure": {
-      "defaultVariant": "off",
+      "defaultVariant": "25%",
       "description": "Fail payment service charge requests n%",
       "state": "ENABLED",
       "variants": {
@@ -163,7 +163,7 @@
         "25%": 0.25,
         "50%": 0.5,
         "75%": 0.75,
-        "90%": 0.95,
+        "90%": 0.90,
         "off": 0
       }
     },
